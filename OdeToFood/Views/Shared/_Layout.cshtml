@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -24,15 +26,20 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Reviews", "Index", "Reviews")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")*
             </div>
         </div>
     </div>
     <div class="container body-content">
+        @RenderSection("featured", required: false)
         <p>@ViewBag.Message</p>
         @RenderBody()
         <hr />
+        <div>
+            @Html.Action("BestReview", "Reviews")
+        </div>
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
