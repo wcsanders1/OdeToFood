@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OdeToFood.Models.RestaurantListViewModel>
+﻿@model IPagedList<RestaurantListViewModel>
 
 @{
     ViewBag.Title = "Home Page";
@@ -6,21 +6,21 @@
 
 <form method="get" action="@Url.Action("Index")"
       data-otf-ajax="true" data-otf-target="#restaurantList">
-    <input type="search" name="searchTerm" />
+    <input type="search" name="searchTerm" data-otf-autocomplete="@Url.Action("Autocomplete")" />
     <input type="submit" value="Search By Name" />
 </form>
 
-@*@using (Ajax.BeginForm(               this code would work without otf.js, but the otf.js is easier to customize
-                new AjaxOptions
-                {
-                    HttpMethod = "get",
-                    InsertionMode = InsertionMode.Replace,
-                    UpdateTargetId = "restaurantList"
-                }))
-
-{
-    <input type="search" name="searchTerm" />
-    <input type="submit" value="Search By Name" />
-}*@
-
 @Html.Partial("_Restaurants", Model)
+
+    @*@using (Ajax.BeginForm(               this code would work without otf.js, but the otf.js is easier to customize
+                    new AjaxOptions
+                    {
+                        HttpMethod = "get",
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "restaurantList"
+                    }))
+
+    {
+        <input type="search" name="searchTerm" />
+        <input type="submit" value="Search By Name" />
+    }*@
