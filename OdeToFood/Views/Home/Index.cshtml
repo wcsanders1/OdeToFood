@@ -10,6 +10,8 @@
     <input type="submit" value="Search By Name" />
 </form>
 
+@ViewBag.MailServer
+
 @Html.Partial("_Restaurants", Model)
 
     @*@using (Ajax.BeginForm(               this code would work without otf.js, but the otf.js is easier to customize

@@ -5,17 +5,28 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
+using System.Configuration;
 
 namespace OdeToFood.Controllers
 {
     public class HomeController : Controller
     {
-        OdeToFoodDb _db = new OdeToFoodDb();
+        IOdeToFoodDb _db;
+
+        public HomeController()
+        {
+            _db = new OdeToFoodDb();
+        }
+
+        public HomeController(IOdeToFoodDb db)
+        {
+            _db = db;
+        }
 
         public ActionResult Autocomplete(string term)
         {
             var model =
-                _db.Restaurants
+                _db.Query<Restaurant>()
                     .Where(r => r.Name.StartsWith(term))
                     .Take(10)
                     .Select(r => new
@@ -26,6 +37,9 @@ namespace OdeToFood.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
+        [OutputCache(CacheProfile = "Long",
+            VaryByHeader = "X-Requested-With;Accept-Language",
+            Location = System.Web.UI.OutputCacheLocation.Server)]
         public ActionResult Index(string searchTerm = null, int page = 1)
         {
             //var model =
@@ -43,8 +57,9 @@ namespace OdeToFood.Controllers
             //Above and below work equally well here except only in below can you use .Take(10)
 
             var model =
-                _db.Restaurants
-                .OrderByDescending(r => r.Reviews.Average(review => review.Rating))
+                _db.Query<Restaurant>()
+                .OrderBy(r => r.Id)
+                //.OrderByDescending(r => r.Reviews.Average(review => review.Rating))
                 .Where(r => searchTerm == null || r.Name.StartsWith(searchTerm))            
                 .Select(r => new RestaurantListViewModel
                         { 
@@ -54,6 +69,8 @@ namespace OdeToFood.Controllers
                             Country = r.Country,
                             CountOfReviews = r.Reviews.Count()
                         }).ToPagedList(page, 10);    //this specifies 10 restaurants per page
+
+            ViewBag.MailServer = ConfigurationManager.AppSettings["Mailserver"];
 
             if (Request.IsAjaxRequest())
             {
